@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+    <!-- xmlns:aop="http://www.springframework.org/schema/aop" -->
+    <!-- http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.2.xsd -->
+    <!--数据源配置  -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <!-- <property name="url">
+            <value><![CDATA[jdbc:mysql://127.0.0.1:3306/smbms?
+                    useUnicode=true&characterEncoding=utf-8]]></value>
+        </property> -->
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/xm?
+                        useUnicode=true&amp;characterEncoding=utf-8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+
+    <!-- 配置SqlSessionFactoryBean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 引用数据源组件 -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 引用MyBatis配置文件中的配置 -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- 配置SQL映射文件信息 -->
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:com/dao/impl/*.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 配置SqlSessionTemplate -->
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 配置DAO -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" /> -->
+        <property name="basePackage" value="com.dao"/>
+    </bean>
+
+
+    <context:component-scan base-package="com.*"/>
+    <!-- <bean id="suibian" class="com.aop.AroundLogger"></bean>
+    <aop:aspectj-autoproxy/>  -->
+</beans>
